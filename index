@@ -4,166 +4,420 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pro vs Contra Business Analyzer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .tab-active { @apply bg-green-500 text-white shadow-sm; }
-        .tab-inactive { @apply text-gray-600 hover:text-gray-800; }
-        .tab-contra-active { @apply bg-red-500 text-white shadow-sm; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .product-name {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: block;
+            color: #1f2937;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .score-container {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .score-card {
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .score-card.pro {
+            background: #dcfce7;
+            border: 2px solid #16a34a;
+        }
+
+        .score-card.contra {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+        }
+
+        .score-card.result {
+            background: #dbeafe;
+            border: 2px solid #2563eb;
+        }
+
+        .score-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .score-details {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .tab-container {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 5px;
+            display: flex;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab.pro.active {
+            color: #16a34a;
+        }
+
+        .tab.contra.active {
+            color: #dc2626;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .section-title.pro {
+            color: #16a34a;
+        }
+
+        .section-title.contra {
+            color: #dc2626;
+        }
+
+        .add-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .add-btn.pro {
+            background: #16a34a;
+            color: white;
+        }
+
+        .add-btn.contra {
+            background: #dc2626;
+            color: white;
+        }
+
+        .add-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .argument-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #e5e7eb;
+        }
+
+        .argument-card.pro {
+            border-left-color: #16a34a;
+        }
+
+        .argument-card.contra {
+            border-left-color: #dc2626;
+        }
+
+        .argument-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .argument-title {
+            flex: 1;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #1f2937;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #dc2626;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #fef2f2;
+        }
+
+        .argument-description {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            margin-bottom: 15px;
+        }
+
+        .argument-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .points-label {
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .points-select {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #6b7280;
+            background: white;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .score-container {
+                flex-direction: column;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .product-name {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <div class="bg-white border-b border-gray-200">
-        <div class="max-w-6xl mx-auto px-4 py-6">
-            <div class="text-center mb-6">
-                <input
-                    type="text"
-                    id="productName"
-                    placeholder="Produktname eingeben..."
-                    class="text-3xl font-bold text-center border-none outline-none bg-transparent placeholder-gray-400 w-full max-w-md"
-                />
-                <p class="text-gray-600 mt-2">Business Entscheidungs-Analyzer</p>
-            </div>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <input
+                type="text"
+                id="productName"
+                placeholder="Produktname eingeben..."
+                class="product-name"
+            />
+            <p class="subtitle">Business Entscheidungs-Analyzer</p>
             
-            <!-- Score Display -->
-            <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                <div class="grid grid-cols-3 gap-4 text-center">
-                    <div class="bg-green-100 rounded-lg p-4">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="text-green-600 mr-2" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 14l3-3 3 3 5-5-1.5-1.5L12 12 9 9l-3.5 3.5L7 14z"/>
-                            </svg>
-                            <span class="font-semibold text-green-800">PRO</span>
-                        </div>
-                        <div class="text-2xl font-bold text-green-600" id="proScore">0</div>
-                        <div class="text-sm text-green-600" id="proCount">0 Argumente</div>
-                    </div>
-                    
-                    <div class="bg-blue-100 rounded-lg p-4">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="text-blue-600 mr-2" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
-                            <span class="font-semibold text-blue-800">ERGEBNIS</span>
-                        </div>
-                        <div class="text-lg font-bold text-blue-600" id="winner">Unentschieden</div>
-                        <div class="text-sm text-blue-600" id="difference">Differenz: 0</div>
-                    </div>
-                    
-                    <div class="bg-red-100 rounded-lg p-4">
-                        <div class="flex items-center justify-center mb-2">
-                            <svg class="text-red-600 mr-2" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 10l5 5 5-5-1.5-1.5L12 12 8.5 8.5 7 10z"/>
-                            </svg>
-                            <span class="font-semibold text-red-800">CONTRA</span>
-                        </div>
-                        <div class="text-2xl font-bold text-red-600" id="contraScore">0</div>
-                        <div class="text-sm text-red-600" id="contraCount">0 Argumente</div>
-                    </div>
+            <!-- Scores -->
+            <div class="score-container">
+                <div class="score-card pro">
+                    <div class="score-title">✅ PRO</div>
+                    <div class="score-value" id="proScore">0</div>
+                    <div class="score-details" id="proCount">0 Argumente</div>
+                </div>
+                
+                <div class="score-card result">
+                    <div class="score-title">🏆 ERGEBNIS</div>
+                    <div class="score-value" id="winner" style="font-size: 1.2rem;">Unentschieden</div>
+                    <div class="score-details" id="difference">Differenz: 0</div>
+                </div>
+                
+                <div class="score-card contra">
+                    <div class="score-title">❌ CONTRA</div>
+                    <div class="score-value" id="contraScore">0</div>
+                    <div class="score-details" id="contraCount">0 Argumente</div>
                 </div>
             </div>
             
             <!-- Tabs -->
-            <div class="flex justify-center">
-                <div class="bg-gray-100 rounded-lg p-1 flex">
-                    <button
-                        id="proTab"
-                        onclick="switchTab('pro')"
-                        class="px-6 py-2 rounded-md font-medium transition-all bg-green-500 text-white shadow-sm"
-                    >
+            <div class="tabs">
+                <div class="tab-container">
+                    <button id="proTab" class="tab pro active" onclick="switchTab('pro')">
                         Pro-Argumente
                     </button>
-                    <button
-                        id="contraTab"
-                        onclick="switchTab('contra')"
-                        class="px-6 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-gray-800"
-                    >
+                    <button id="contraTab" class="tab contra" onclick="switchTab('contra')">
                         Contra-Argumente
                     </button>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Content -->
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <!-- Pro Arguments -->
-        <div id="proSection">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-green-700">Pro-Argumente</h2>
-                <button
-                    onclick="addArgument('pro')"
-                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-                >
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2v20M2 12h20"/>
-                    </svg>
-                    Argument hinzufügen
-                </button>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Pro Section -->
+            <div id="proSection" class="section active">
+                <div class="section-header">
+                    <h2 class="section-title pro">Pro-Argumente</h2>
+                    <button class="add-btn pro" onclick="addArgument('pro')">
+                        <span>+</span>
+                        Argument hinzufügen
+                    </button>
+                </div>
+                
+                <div id="proArguments">
+                    <div class="empty-state">
+                        <p><strong>Noch keine Pro-Argumente hinzugefügt.</strong></p>
+                        <p>Klicke auf "Argument hinzufügen" um zu beginnen.</p>
+                    </div>
+                </div>
             </div>
             
-            <div id="proArguments" class="space-y-4">
-                <div class="text-center py-12 text-gray-500" id="proEmpty">
-                    <p>Noch keine Pro-Argumente hinzugefügt.</p>
-                    <p class="text-sm mt-2">Klicke auf "Argument hinzufügen" um zu beginnen.</p>
+            <!-- Contra Section -->
+            <div id="contraSection" class="section">
+                <div class="section-header">
+                    <h2 class="section-title contra">Contra-Argumente</h2>
+                    <button class="add-btn contra" onclick="addArgument('contra')">
+                        <span>+</span>
+                        Argument hinzufügen
+                    </button>
+                </div>
+                
+                <div id="contraArguments">
+                    <div class="empty-state">
+                        <p><strong>Noch keine Contra-Argumente hinzugefügt.</strong></p>
+                        <p>Klicke auf "Argument hinzufügen" um zu beginnen.</p>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- Contra Arguments -->
-        <div id="contraSection" class="hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-red-700">Contra-Argumente</h2>
-                <button
-                    onclick="addArgument('contra')"
-                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-                >
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2v20M2 12h20"/>
-                    </svg>
-                    Argument hinzufügen
-                </button>
-            </div>
-            
-            <div id="contraArguments" class="space-y-4">
-                <div class="text-center py-12 text-gray-500" id="contraEmpty">
-                    <p>Noch keine Contra-Argumente hinzugefügt.</p>
-                    <p class="text-sm mt-2">Klicke auf "Argument hinzufügen" um zu beginnen.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Footer -->
-    <div class="bg-white border-t border-gray-200 mt-12">
-        <div class="max-w-4xl mx-auto px-4 py-6 text-center text-gray-600">
-            <p>💡 Tipp: Bewerte die Wichtigkeit jedes Arguments durch die Punkte-Gewichtung</p>
+        <!-- Footer -->
+        <div class="footer">
+            <p>💡 <strong>Tipp:</strong> Bewerte die Wichtigkeit jedes Arguments durch die Punkte-Gewichtung</p>
         </div>
     </div>
 
     <script>
         let proArguments = [];
         let contraArguments = [];
-        let currentTab = 'pro';
         let argumentCounter = 0;
 
         function switchTab(tab) {
-            currentTab = tab;
-            
-            // Update tab buttons
+            // Update tabs
             const proTab = document.getElementById('proTab');
             const contraTab = document.getElementById('contraTab');
+            const proSection = document.getElementById('proSection');
+            const contraSection = document.getElementById('contraSection');
             
             if (tab === 'pro') {
-                proTab.className = 'px-6 py-2 rounded-md font-medium transition-all bg-green-500 text-white shadow-sm';
-                contraTab.className = 'px-6 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-gray-800';
-                document.getElementById('proSection').classList.remove('hidden');
-                document.getElementById('contraSection').classList.add('hidden');
+                proTab.classList.add('active');
+                contraTab.classList.remove('active');
+                proSection.classList.add('active');
+                contraSection.classList.remove('active');
             } else {
-                contraTab.className = 'px-6 py-2 rounded-md font-medium transition-all bg-red-500 text-white shadow-sm';
-                proTab.className = 'px-6 py-2 rounded-md font-medium transition-all text-gray-600 hover:text-gray-800';
-                document.getElementById('contraSection').classList.remove('hidden');
-                document.getElementById('proSection').classList.add('hidden');
+                contraTab.classList.add('active');
+                proTab.classList.remove('active');
+                contraSection.classList.add('active');
+                proSection.classList.remove('active');
             }
         }
 
@@ -212,49 +466,47 @@
 
         function renderArgumentList(type, arguments) {
             const container = document.getElementById(type + 'Arguments');
-            const emptyState = document.getElementById(type + 'Empty');
             
             if (arguments.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-gray-500">
-                        <p>Noch keine ${type === 'pro' ? 'Pro' : 'Contra'}-Argumente hinzugefügt.</p>
-                        <p class="text-sm mt-2">Klicke auf "Argument hinzufügen" um zu beginnen.</p>
+                    <div class="empty-state">
+                        <p><strong>Noch keine ${type === 'pro' ? 'Pro' : 'Contra'}-Argumente hinzugefügt.</strong></p>
+                        <p>Klicke auf "Argument hinzufügen" um zu beginnen.</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = arguments.map(arg => `
-                <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-                    <div class="flex justify-between items-start mb-3">
+                <div class="argument-card ${type}">
+                    <div class="argument-header">
                         <input
                             type="text"
                             placeholder="Argument Titel"
-                            value="${arg.title}"
+                            value="${arg.title || ''}"
                             onchange="updateArgument('${type}', ${arg.id}, 'title', this.value)"
-                            class="flex-1 text-lg font-semibold border-none outline-none bg-transparent placeholder-gray-400"
+                            class="argument-title"
                         />
                         <button
                             onclick="deleteArgument('${type}', ${arg.id})"
-                            class="text-red-500 hover:text-red-700 ml-2"
+                            class="delete-btn"
+                            title="Löschen"
                         >
-                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-                            </svg>
+                            🗑️
                         </button>
                     </div>
                     
                     <textarea
                         placeholder="Beschreibung des Arguments..."
                         onchange="updateArgument('${type}', ${arg.id}, 'description', this.value)"
-                        class="w-full p-2 border border-gray-200 rounded-md resize-none h-20 text-sm"
-                    >${arg.description}</textarea>
+                        class="argument-description"
+                    >${arg.description || ''}</textarea>
                     
-                    <div class="flex items-center justify-between mt-3">
-                        <span class="text-sm text-gray-600">Gewichtung:</span>
+                    <div class="argument-footer">
+                        <span class="points-label">Gewichtung:</span>
                         <select
                             onchange="updateArgument('${type}', ${arg.id}, 'points', parseInt(this.value))"
-                            class="px-3 py-1 border border-gray-200 rounded-md text-sm"
+                            class="points-select"
                         >
                             <option value="1" ${arg.points === 1 ? 'selected' : ''}>1 Punkt (niedrig)</option>
                             <option value="2" ${arg.points === 2 ? 'selected' : ''}>2 Punkte (mittel)</option>
@@ -287,8 +539,11 @@
             document.getElementById('winner').textContent = winner;
         }
 
-        // Initialize
-        updateScores();
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateScores();
+            renderArguments();
+        });
     </script>
 </body>
 </html>
